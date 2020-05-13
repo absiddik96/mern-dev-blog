@@ -6,10 +6,15 @@ const port = process.env.PORT || 5000;
 // Connect database
 connectDB();
 
+app.use(express.json({ extended: false}));
+
 // Test Route
-app.use('/', (req, res) => {
+app.get('/', (req, res) => {
   res.json({mgs: "this is test"});
 });
+
+//Define Route
+app.use('/api/auth', require('./routes/api/auth'));
 
 app.listen(port, () => {
   console.log("Server is running on port: " + port);

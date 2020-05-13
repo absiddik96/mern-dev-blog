@@ -1,3 +1,4 @@
 {
-  "mongoURI": "mongodb://localhost:27017/dev-blog"
+  "mongoURI": "mongodb://localhost:27017/dev-blog",
+  "jwtSecret": "joy@siddik"
 }
