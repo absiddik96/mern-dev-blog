@@ -20,7 +20,6 @@ const auth = (req, res, next) => {
         next();
       }
     });
-    res.json({ decode });
   } catch (e) {
     res.status(500).json({ errors: "Server error"})
   }
