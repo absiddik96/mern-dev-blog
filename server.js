@@ -16,6 +16,7 @@ app.get('/', (req, res) => {
 //Define Route
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/posts', require('./routes/api/posts'));
 
 app.listen(port, () => {
   console.log("Server is running on port: " + port);
