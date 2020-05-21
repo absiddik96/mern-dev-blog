@@ -1,45 +1,62 @@
-import React from 'react';
+import React, {Fragment, useState} from 'react';
 import {Link} from "react-router-dom";
+import {connect} from 'react-redux';
+import PropTypes from 'prop-types'
 
-const Register = () => {
+import {setAlert} from '../../actions/alert'
+
+const Register = ({ setAlert }) => {
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirm_password: ''
+  });
+  
+  const { name, email, password, confirm_password } = formData;
+  const onchange = e => setFormData({
+    ...formData,
+    [e.target.name]: e.target.value
+  });
+  
+  const onsubmit = e => {
+    e.preventDefault();
+    if (password !== confirm_password) {
+      setAlert('Password don\'t match', 'danger')
+    } else {
+      console.log(formData)
+    }
+  };
+  
   return (
-    <section className="container">
+    <Fragment>
       <h1 className="large text-primary">Sign Up</h1>
       <p className="lead"><i className="fas fa-user"></i> Create Your Account</p>
-      <form className="form" action="create-profile.html">
+      <form className="form" onSubmit={e => onsubmit(e)}>
         <div className="form-group">
-          <input type="text" placeholder="Name" name="name" required/>
+          <input type="text" placeholder="Name" name="name" required value={name} onChange={e => onchange(e)}/>
         </div>
         <div className="form-group">
-          <input type="email" placeholder="Email Address" name="email"/>
-          <small className="form-text"
-          >This site uses Gravatar so if you want a profile image, use a
-            Gravatar email</small
-          >
+          <input type="email" placeholder="Email Address" name="email" required value={email} onChange={e => onchange(e)}/>
+          <small className="form-text">This site uses Gravatar so if you want a profile image, use a Gravatar email</small>
         </div>
         <div className="form-group">
-          <input
-            type="password"
-            placeholder="Password"
-            name="password"
-            minLength="6"
-          />
+          <input type="password" placeholder="Password" name="password" minLength="6" required value={password} onChange={e => onchange(e)}/>
         </div>
         <div className="form-group">
-          <input
-            type="password"
-            placeholder="Confirm Password"
-            name="password2"
-            minLength="6"
-          />
+          <input type="password" placeholder="Confirm Password" name="confirm_password" minLength="6" value={confirm_password} onChange={e => onchange(e)}/>
         </div>
         <input type="submit" className="btn btn-primary" value="Register"/>
       </form>
       <p className="my-1">
         Already have an account? <Link to="/login">Sign In</Link>
       </p>
-    </section>
+    </Fragment>
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+};
+
+export default connect(null, { setAlert })(Register);
