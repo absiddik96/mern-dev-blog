@@ -8,6 +8,16 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const User = require('../../models/User');
+const auth = require('../../middleware/auth');
+
+router.get('/', [auth], async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    return res.json(user);
+  } catch (e) {
+    res.status(500).json({errors: "Server error"})
+  }
+});
 
 const registerValidation = [
   check('name', 'Name field is required').trim().not().isEmpty(),
@@ -79,11 +89,11 @@ router.post('/login', [loginValidation], async (req, res) => {
   try {
     let user = await User.findOne({email});
     if (!user) {
-      return res.status(400).json({errors: 'This credential do not match in our records.', param: "email"});
+      return res.status(400).json({errors: [{msg: 'This credential do not match in our records.', param: "email"}]});
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({errors: 'This credential do not match in our records.', param: "email"});
+      return res.status(400).json({errors: [{msg: 'This credential do not match in our records.', param: "email"}]});
     }
     const payload = {
       user: {
