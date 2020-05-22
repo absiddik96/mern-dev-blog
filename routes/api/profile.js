@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
-const normalizeUrl = require('normalize-url');
 
 const auth = require('../../middleware/auth');
 const Profile = require('../../models/Profile');
@@ -46,7 +45,7 @@ router.post('/', [auth, profileValidation], async (req, res) => {
   const profileFields = {
     user: req.user.id,
     company,
-    website: website === '' ? '' : normalizeUrl(website, { forceHttps: true }),
+    website: website === '' ? '' : website,
     location,
     bio,
     status,
@@ -59,7 +58,7 @@ router.post('/', [auth, profileValidation], async (req, res) => {
   const socialFields = { youtube, twitter, facebook, linkedin, instagram };
   for (const [key, value] of Object.entries(socialFields)) {
     if (value && value.length > 0) {
-      socialFields[key] = normalizeUrl(value, { forceHttps: true })
+      socialFields[key] = value
     }
   }
   

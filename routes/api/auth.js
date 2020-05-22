@@ -3,7 +3,6 @@ const router = express.Router();
 const {check, validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const gravatar = require('gravatar');
-const normalize = require('normalize-url');
 const jwt = require('jsonwebtoken');
 const config = require('config');
 
@@ -41,14 +40,11 @@ router.post('/register', [registerValidation], async (req, res) => {
       return res.status(400).json({errors: [{msg: 'User already exists', param: 'email'}]})
     }
     
-    const avatar = normalize(
-      gravatar.url(email, {
+    const avatar = gravatar.url(email, {
         s: '200',
         r: 'pg',
         d: 'mm'
-      }),
-      {forceHttps: true}
-    );
+      });
     
     user = new User({name, email, avatar, password});
     

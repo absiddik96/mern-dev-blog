@@ -8,10 +8,13 @@ import setAuthToken from "./utils/setAuthToken";
 import {loadUser} from "./actions/auth";
 import Routes from "./components/routing/Routes";
 
+if (localStorage.token) {
+  setAuthToken(localStorage.token);
+}
+
 const App = () => {
   
   useEffect(() => {
-    setAuthToken(localStorage.token);
     store.dispatch(loadUser())
   }, []);
   

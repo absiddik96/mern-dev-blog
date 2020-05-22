@@ -8,6 +8,7 @@ import PrivateRoute from "./PrivateRoute";
 import Dashboard from "../dashboard/Dashboard";
 import Landing from "../layout/Landing";
 import Navbar from "../layout/Navbar";
+import ProfileForm from "../profile-form/ProfileForm";
 
 const Routes = props => {
   return (
@@ -20,6 +21,7 @@ const Routes = props => {
           <Route exact path="/login" component={Login}/>
           <Route exact path="/register" component={Register}/>
           <PrivateRoute exact path="/dashboard" component={Dashboard}/>
+          <PrivateRoute exact path="/create-profile" component={ProfileForm}/>
         </Switch>
       </section>
     </Fragment>
