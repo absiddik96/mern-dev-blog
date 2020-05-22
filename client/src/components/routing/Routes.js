@@ -22,6 +22,7 @@ const Routes = props => {
           <Route exact path="/register" component={Register}/>
           <PrivateRoute exact path="/dashboard" component={Dashboard}/>
           <PrivateRoute exact path="/create-profile" component={ProfileForm}/>
+          <PrivateRoute exact path="/edit-profile" component={ProfileForm}/>
         </Switch>
       </section>
     </Fragment>

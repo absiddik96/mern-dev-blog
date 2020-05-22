@@ -5,6 +5,7 @@ import {Link} from "react-router-dom";
 
 import {getAuthProfile} from "../../actions/profile";
 import Spinner from "../layout/Spinner";
+import DashboardActions from "./DashboardActions";
 
 const Dashboard = ({ auth: { user }, profile: { profile, loading }, getAuthProfile }) => {
   
@@ -23,7 +24,7 @@ const Dashboard = ({ auth: { user }, profile: { profile, loading }, getAuthProfi
         </p>
         {profile !== null ? (
           <Fragment>
-            Has Profile
+            <DashboardActions/>
           </Fragment>
         ) : (
           <Fragment>

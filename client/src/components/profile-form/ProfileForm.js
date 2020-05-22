@@ -1,7 +1,7 @@
 import React, {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {withRouter} from "react-router-dom"
+import {Link, withRouter} from "react-router-dom"
 
 import {createProfile, getAuthProfile} from "../../actions/profile";
 
@@ -71,7 +71,7 @@ const ProfileForm = ({ createProfile, history, profile:{profile, loading}, getAu
   return (
     <Fragment>
       <h1 className="large text-primary">
-        Create Your Profile
+        {profile ? 'Update' : 'Create'} Your Profile
       </h1>
       <p className="lead">
         <i className="fas fa-user"></i> Let's get some information to make your
@@ -173,7 +173,7 @@ const ProfileForm = ({ createProfile, history, profile:{profile, loading}, getAu
         )}
         
         <input type="submit" className="btn btn-primary my-1"/>
-        <a className="btn btn-light my-1" href="dashboard.html">Go Back</a>
+        <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
       </form>
     </Fragment>
   );
@@ -181,6 +181,7 @@ const ProfileForm = ({ createProfile, history, profile:{profile, loading}, getAu
 
 ProfileForm.propTypes = {
   createProfile: PropTypes.func.isRequired,
+  getAuthProfile: PropTypes.func.isRequired,
   profile: PropTypes.object,
 };
 
