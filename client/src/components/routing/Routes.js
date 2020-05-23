@@ -9,8 +9,8 @@ import Dashboard from "../dashboard/Dashboard";
 import Landing from "../layout/Landing";
 import Navbar from "../layout/Navbar";
 import ProfileForm from "../profile-form/ProfileForm";
-import AddExperience from "../profile-form/AddExperience";
-import AddEducation from "../profile-form/AddEducation";
+import ExperienceForm from "../profile-form/ExperienceForm";
+import AddEducation from "../profile-form/EducationForm";
 
 const Routes = props => {
   return (
@@ -25,9 +25,10 @@ const Routes = props => {
           <PrivateRoute exact path="/dashboard" component={Dashboard}/>
           <PrivateRoute exact path="/create-profile" component={ProfileForm}/>
           <PrivateRoute exact path="/edit-profile" component={ProfileForm}/>
-          <PrivateRoute exact path="/add-experience" component={AddExperience}/>
-          <PrivateRoute exact path="/add-experience" component={AddExperience}/>
+          <PrivateRoute exact path="/add-experience" component={ExperienceForm}/>
+          <PrivateRoute exact path="/edit-experience/:exp_id" component={ExperienceForm}/>
           <PrivateRoute exact path="/add-education" component={AddEducation}/>
+          <PrivateRoute exact path="/edit-education/:edu_id" component={AddEducation}/>
         </Switch>
       </section>
     </Fragment>

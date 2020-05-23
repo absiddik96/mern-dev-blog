@@ -20,7 +20,7 @@ const initialState = {
   instagram: ''
 };
 
-const ProfileForm = ({ createProfile, history, profile:{profile, loading}, getAuthProfile }) => {
+const ProfileForm = ({ createProfile, history, profile: { profile, loading }, getAuthProfile }) => {
   const [formData, setFormData] = useState(initialState);
   
   const {
@@ -172,7 +172,9 @@ const ProfileForm = ({ createProfile, history, profile:{profile, loading}, getAu
           </Fragment>
         )}
         
-        <input type="submit" className="btn btn-primary my-1"/>
+        <button type="submit" className="btn btn-primary my-1">
+          {profile ? 'Update' : 'Submit'}
+        </button>
         <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
       </form>
     </Fragment>

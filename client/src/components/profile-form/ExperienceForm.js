@@ -1,25 +1,57 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 import PropTypes from 'prop-types';
+import * as moment from "moment";
 
-import {addExperience} from "../../actions/profile";
+import {addExperience, getAuthProfile} from "../../actions/profile";
+import {setAlert} from "../../actions/alert";
 
-const AddExperience = ({ addExperience, history }) => {
+const initialState = {
+  title: "",
+  company: "",
+  location: "",
+  from: "",
+  current: false,
+  to: "",
+  description: "",
+};
+
+const ExperienceForm = ({ addExperience, history, getAuthProfile, match, profile: { loading, profile }, setAlert }) => {
   
-  const [formData, setFormData] = useState({
-    title: "",
-    company: "",
-    location: "",
-    from: "",
-    current: false,
-    to: "",
-    description: "",
-  });
+  const exp_id = match.params.exp_id ?? null;
+  
+  const [formData, setFormData] = useState(initialState);
+  
+  useEffect(() => {
+    if (exp_id) getAuthProfile();
+    if (!loading && profile && exp_id) {
+      const exp = profile.experience.find(exp => exp._id === exp_id);
+      
+      if (!exp) {
+        setAlert("Experience not found", "danger", 3000);
+        return history.push('/dashboard')
+      }
+      
+      let initialExp = { ...initialState };
+      
+      exp.from = exp.from ? moment(exp.from).format('YYYY-MM-DD') : initialExp.from;
+      exp.to = exp.to ? moment(exp.to).format('YYYY-MM-DD') : initialExp.to;
+  
+      toggleToDateDisabled(exp.current)
+      
+      for (const key in exp) {
+        if (key in initialExp) initialExp[key] = exp[key];
+      }
+      
+      setFormData(initialExp)
+    }
+  }, [loading, getAuthProfile, exp_id]);
   
   const [toDateDisabled, toggleToDateDisabled] = useState(false);
   
   const { title, company, location, from, current, to, description } = formData;
+  
   
   const onChange = (e) => {
     setFormData({
@@ -30,13 +62,13 @@ const AddExperience = ({ addExperience, history }) => {
   
   const onSubmit = e => {
     e.preventDefault();
-    addExperience(formData, history);
+    addExperience(formData, history, exp_id);
   };
   
   return (
     <Fragment>
       <h1 className="large text-primary">
-        Add An Experience
+        {exp_id ? 'Update' : "Add An"} Experience
       </h1>
       <p className="lead">
         <i className="fas fa-code-branch"></i> Add any developer/programming
@@ -74,15 +106,24 @@ const AddExperience = ({ addExperience, history }) => {
         <div className="form-group">
           <textarea name="description" value={description} onChange={e => onChange(e)} cols="30" rows="5" placeholder="Job Description"></textarea>
         </div>
-        <input type="submit" className="btn btn-primary my-1"/>
+        <button type="submit" className="btn btn-primary my-1">
+          {exp_id ? 'Update' : "Submit"}
+        </button>
         <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
       </form>
     </Fragment>
   );
 };
 
-AddExperience.propTypes = {
+ExperienceForm.propTypes = {
   addExperience: PropTypes.func.isRequired,
+  getAuthProfile: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
-export default connect(null, { addExperience })(withRouter(AddExperience));
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
+export default connect(mapStateToProps, { addExperience, getAuthProfile, setAlert })(withRouter(ExperienceForm));

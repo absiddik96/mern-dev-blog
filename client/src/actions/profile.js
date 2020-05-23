@@ -51,7 +51,7 @@ export const createProfile = (formData, history, edit = false) => async dispatch
   }
 };
 
-export const addExperience = (formData, history) => async dispatch => {
+export const addExperience = (formData, history, exp_id = null) => async dispatch => {
   const config = {
     headers: {
       "Content-Type": "application/json"
@@ -59,14 +59,23 @@ export const addExperience = (formData, history) => async dispatch => {
   };
   
   try {
-    const res = await axios.post(`/api/profile/experience`, formData, config);
+    let res = null;
+    if (exp_id) {
+      res = await axios.put(`/api/profile/experience/${exp_id}`, formData, config);
+    } else {
+      res = await axios.post(`/api/profile/experience`, formData, config);
+    }
     
     dispatch({
       type: GET_PROFILE,
       payload: res.data
     });
-    
-    dispatch(setAlert('Experience created successfully', 'success', 3000));
+  
+    if (exp_id) {
+      dispatch(setAlert('Experience updated successfully', 'success', 3000));
+    } else {
+      dispatch(setAlert('Experience created successfully', 'success', 3000));
+    }
     
     history.push('/dashboard')
   } catch (e) {
@@ -83,7 +92,25 @@ export const addExperience = (formData, history) => async dispatch => {
   }
 };
 
-export const addEducation = (formData, history) => async dispatch => {
+export const deleteExperience = exp_id => async dispatch => {
+  try {
+    const res = await axios.delete(`/api/profile/experience/${exp_id}`);
+    
+    dispatch({
+      type: GET_PROFILE,
+      payload: res.data
+    });
+    
+    dispatch(setAlert('Experience deleted successfully', 'success', 3000));
+  } catch (e) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: e.response.statusText, status: e.response.status }
+    })
+  }
+};
+
+export const addEducation = (formData, history, edu_id = null) => async dispatch => {
   const config = {
     headers: {
       "Content-Type": "application/json"
@@ -91,14 +118,23 @@ export const addEducation = (formData, history) => async dispatch => {
   };
   
   try {
-    const res = await axios.post(`/api/profile/education`, formData, config);
+    let res = null;
+    if (edu_id) {
+      res = await axios.put(`/api/profile/education/${edu_id}`, formData, config);
+    } else {
+      res = await axios.post(`/api/profile/education`, formData, config);
+    }
     
     dispatch({
       type: GET_PROFILE,
       payload: res.data
     });
-    
-    dispatch(setAlert('Education created successfully', 'success', 3000));
+  
+    if (edu_id) {
+      dispatch(setAlert('Education updated successfully', 'success', 3000));
+    } else {
+      dispatch(setAlert('Education created successfully', 'success', 3000));
+    }
     
     history.push('/dashboard')
   } catch (e) {
@@ -108,6 +144,24 @@ export const addEducation = (formData, history) => async dispatch => {
       errors.forEach(error => dispatch(setAlert(error.msg, 'danger')))
     }
     
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: e.response.statusText, status: e.response.status }
+    })
+  }
+};
+
+export const deleteEducation = edu_id => async dispatch => {
+  try {
+    const res = await axios.delete(`/api/profile/education/${edu_id}`);
+    
+    dispatch({
+      type: GET_PROFILE,
+      payload: res.data
+    });
+    
+    dispatch(setAlert('Education deleted successfully', 'success', 3000));
+  } catch (e) {
     dispatch({
       type: PROFILE_ERROR,
       payload: { msg: e.response.statusText, status: e.response.status }

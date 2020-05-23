@@ -1,21 +1,52 @@
-import React, {Fragment, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import {connect} from "react-redux";
 import {Link, withRouter} from "react-router-dom";
 
-import {addEducation} from "../../actions/profile";
+import {addEducation, getAuthProfile} from "../../actions/profile";
+import {setAlert} from "../../actions/alert";
+import * as moment from "moment";
 
-const AddEducation = ({ addEducation, history }) => {
+const initialState = {
+  degree: "",
+  school: "",
+  fieldofstudy: "",
+  from: "",
+  current: false,
+  to: "",
+  description: "",
+};
+
+const EducationForm = ({ addEducation, history, getAuthProfile, match, profile: { loading, profile }, setAlert }) => {
   
-  const [formData, setFormData] = useState({
-    degree: "",
-    school: "",
-    fieldofstudy: "",
-    from: "",
-    current: false,
-    to: "",
-    description: "",
-  });
+  const edu_id = match.params.edu_id ?? null;
+  
+  const [formData, setFormData] = useState(initialState);
+  
+  useEffect(() => {
+    if (edu_id) getAuthProfile();
+    if (!loading && profile && edu_id) {
+      const edu = profile.education.find(edu => edu._id === edu_id);
+      
+      if (!edu) {
+        setAlert("Education not found", "danger", 3000);
+        return history.push('/dashboard')
+      }
+      
+      let initialEdu = { ...initialState };
+      
+      edu.from = edu.from ? moment(edu.from).format('YYYY-MM-DD') : initialEdu.from;
+      edu.to = edu.to ? moment(edu.to).format('YYYY-MM-DD') : initialEdu.to;
+      
+      toggleToDateDisabled(edu.current);
+      
+      for (const key in edu) {
+        if (key in initialEdu) initialEdu[key] = edu[key];
+      }
+      
+      setFormData(initialEdu)
+    }
+  }, [loading, getAuthProfile, edu_id]);
   
   const [toDateDisabled, toggleToDateDisabled] = useState(false);
   
@@ -30,12 +61,12 @@ const AddEducation = ({ addEducation, history }) => {
   
   const onSubmit = e => {
     e.preventDefault();
-    addEducation(formData, history);
+    addEducation(formData, history, edu_id);
   };
   return (
     <Fragment>
       <h1 className="large text-primary">
-        Add Your Education
+        {edu_id ? 'Update' : "Add"} Your Education
       </h1>
       <p className="lead">
         <i className="fas fa-graduation-cap"></i> Add any school, bootcamp, etc that
@@ -73,15 +104,24 @@ const AddEducation = ({ addEducation, history }) => {
         <div className="form-group">
           <textarea name="description" value={description} onChange={e => onChange(e)} cols="30" rows="5" placeholder="Program Description"></textarea>
         </div>
-        <input type="submit" className="btn btn-primary my-1"/>
+        <button type="submit" className="btn btn-primary my-1">
+          {edu_id ? 'Update' : "Submit"}
+        </button>
         <Link className="btn btn-light my-1" to="/dashboard">Go Back</Link>
       </form>
     </Fragment>
   );
 };
 
-AddEducation.propTypes = {
+EducationForm.propTypes = {
   addEducation: PropTypes.func.isRequired,
+  getAuthProfile: PropTypes.func.isRequired,
+  setAlert: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired,
 };
 
-export default connect(null, { addEducation })(withRouter(AddEducation));
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
+export default connect(mapStateToProps, { addEducation, getAuthProfile, setAlert })(withRouter(EducationForm));
